@@ -14,12 +14,22 @@ func Login(c *gin.Context) {
 
 }
 
+// Today画面的函数
+
 func Today(c *gin.Context) {
 	today := models.MockDataToday
 	c.JSON(http.StatusOK, today)
 }
 
 func Summary(c *gin.Context) {
+
+}
+
+func Layup(c *gin.Context) {
+
+}
+
+func GetEvents(c *gin.Context) {
 
 }
 
@@ -50,6 +60,8 @@ func UpdateItem(c *gin.Context) {
 	})
 }
 
+// Calendar画面的函数
+
 func Calendar(c *gin.Context) {
 
 }
@@ -58,13 +70,19 @@ func ModifyOneDay(c *gin.Context) {
 
 }
 
+// New画面的函数
+
 func NewEvent(c *gin.Context) {
 
 }
 
+// Overview画面的函数
+
 func Overview(c *gin.Context) {
 
 }
+
+// Profile画面的函数
 
 func Profile(c *gin.Context) {
 

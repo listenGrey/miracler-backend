@@ -36,23 +36,29 @@ func SetupRouter() *gin.Engine {
 	{
 		// Today
 		v1.GET("/today", controllers.Today)
-		v1.PATCH("/events/:eventId/items/:itemIndex", controllers.UpdateItem)
 		v1.POST("/summary", controllers.Summary)
+		v1.POST("/layup", controllers.Layup)
+
+		// Event
+		v1.GET("/events", controllers.GetEvents)
+		v1.PATCH("/events/:eventId/items/:itemIndex", controllers.UpdateItem)
 
 		// Calendar
 		v1.GET("/calendar", controllers.Calendar)
 		v1.PUT("/one-day", controllers.ModifyOneDay)
 
 		// New
-		v1.POST("/event", controllers.NewEvent)
+		v1.POST("/events", controllers.NewEvent)
 
 		// Overview
 		v1.GET("/overview", controllers.Overview)
 
+		// Milestone 打算把日历放在总览的里面，里程碑记录完成情况和线条路程
+
 		// Profile 修改事件和项目
 		v1.GET("/profile", controllers.Profile)
 		v1.PUT("/event", controllers.ModifyEvent)
-		v1.DELETE("/event", controllers.DeleteEvent)
+		v1.DELETE("/events", controllers.DeleteEvent)
 
 		// Testing
 		v1.GET("/ping", func(c *gin.Context) {
