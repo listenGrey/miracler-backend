@@ -14,8 +14,8 @@ func SetupRouter() *gin.Engine {
 
 	// 配置CORS中间件
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"}        // 允许前端的地址
-	config.AllowMethods = []string{"POST", "GET", "DELETE", "PUT"} // 允许的方法
+	config.AllowOrigins = []string{"http://localhost:3000"}                 // 允许前端的地址
+	config.AllowMethods = []string{"POST", "GET", "DELETE", "PUT", "PATCH"} // 允许的方法
 	config.AllowHeaders = []string{"Authorization", "Content-Type"}
 	config.ExposeHeaders = []string{"Content-Length"}
 	config.AllowCredentials = true
@@ -24,10 +24,6 @@ func SetupRouter() *gin.Engine {
 	// 使用zap
 	r.Use(
 		cors.New(config),
-		//logger.GinLogger(),
-		//logger.GinRecovery(false),
-		//Recovery 中间件会 recover掉项目可能出现的panic，并使用zap记录相关日志
-		//middlewares.RateLimitMiddleware(2*time.Second, 40), // 每两秒钟添加十个令牌  全局限流
 	)
 
 	v1 := r.Group("/api/v1")
@@ -36,10 +32,11 @@ func SetupRouter() *gin.Engine {
 	// v1.GET("/refresh_token", controller.RefreshTokenHandler)
 
 	// 中间件
-	v1.Use(middlewares.JWTAuthMiddleWare()) //JWT认证
+	// v1.Use(middlewares.JWTAuthMiddleWare()) //JWT认证
 	{
 		// Today
 		v1.GET("/today", controllers.Today)
+		v1.PATCH("/events/:eventId/items/:itemIndex", controllers.UpdateItem)
 		v1.POST("/summary", controllers.Summary)
 
 		// Calendar
@@ -63,8 +60,8 @@ func SetupRouter() *gin.Engine {
 		})
 
 	}
-	r.NoRoute(func(c *gin.Context) {
+	/*r.NoRoute(func(c *gin.Context) {
 		errHandler.ResponseError(c, code.NotFound)
-	})
+	})*/
 	return r
 }
