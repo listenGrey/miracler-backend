@@ -54,6 +54,7 @@ func SetupRouter() *gin.Engine {
 		v1.GET("/overview", controllers.Overview)
 
 		// Milestone 打算把日历放在总览的里面，里程碑记录完成情况和线条路程
+		v1.GET("/milestone")
 
 		// Profile 修改事件和项目
 		v1.GET("/profile", controllers.Profile)
