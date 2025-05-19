@@ -17,8 +17,7 @@ func Login(c *gin.Context) {
 // Today画面的函数
 
 func Today(c *gin.Context) {
-	today := models.MockDataToday
-	c.JSON(http.StatusOK, today)
+
 }
 
 func Summary(c *gin.Context) {
@@ -30,7 +29,7 @@ func Layup(c *gin.Context) {
 }
 
 func GetEvents(c *gin.Context) {
-
+	c.JSON(http.StatusOK, models.MockDataTodayEvents)
 }
 
 func UpdateItem(c *gin.Context) {

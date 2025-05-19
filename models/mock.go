@@ -25,7 +25,7 @@ type Item struct {
 	Checked bool   `json:"checked"`
 }
 
-var MockDataToday = []Event{
+var MockDataTodayEvents = []Event{
 	{
 		ID:    1,
 		Title: "语言",
@@ -63,15 +63,15 @@ var MockDataToday = []Event{
 }
 
 func PrintMock() {
-	fmt.Println(MockDataToday)
+	fmt.Println(MockDataTodayEvents)
 }
 
 func MockUpdateItem(eventID, itemID int, status bool) {
-	for i := 0; i < len(MockDataToday); i++ {
-		if MockDataToday[i].ID == eventID {
-			for j := 0; j < len(MockDataToday[i].Items); j++ {
-				if MockDataToday[i].Items[j].ID == itemID {
-					MockDataToday[i].Items[j].Checked = !MockDataToday[i].Items[j].Checked
+	for i := 0; i < len(MockDataTodayEvents); i++ {
+		if MockDataTodayEvents[i].ID == eventID {
+			for j := 0; j < len(MockDataTodayEvents[i].Items); j++ {
+				if MockDataTodayEvents[i].Items[j].ID == itemID {
+					MockDataTodayEvents[i].Items[j].Checked = status
 				}
 			}
 		}
