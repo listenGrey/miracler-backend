@@ -2,8 +2,11 @@ package controllers
 
 import (
 	"alpha/models"
+	"alpha/pkg/redis"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func Register(c *gin.Context) {
@@ -45,11 +48,29 @@ func UpdateItem(c *gin.Context) {
 	}
 
 	// TODO: 在此保存修改:数据库更新，缓存更新
+	key := "event:" + eventID
+	val, err := redis.Rdb.Get(redis.Ctx, key).Result()
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "事件未找到"})
+		return
+	}
 
-	eID := models.StringToInt(eventID)
-	iID := models.StringToInt(itemIndex)
-	models.MockUpdateItem(eID, iID, body.Checked)
-	models.PrintMock()
+	var event models.Event
+	if err := json.Unmarshal([]byte(val), &event); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "数据解析失败"})
+		return
+	}
+
+	itemId, _ := strconv.Atoi(itemIndex)
+	if itemId < 0 || itemId >= len(event.Items) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "事项索引无效"})
+		return
+	}
+
+	event.Items[itemId].Checked = body.Checked
+
+	updateBytes, _ := json.Marshal(event)
+	redis.Rdb.Set(redis.Ctx, key, updateBytes, 0)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":    "更新成功",
