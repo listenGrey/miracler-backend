@@ -19,3 +19,5 @@ type Item struct {
 	Text    string `json:"text"`
 	Checked bool   `json:"checked"`
 }
+
+var MockEventsID = []int{1, 2, 3, 4}

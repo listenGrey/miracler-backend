@@ -1,12 +1,11 @@
 package controllers
 
 import (
+	"alpha/logic"
 	"alpha/models"
 	"alpha/pkg/redis"
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 func Register(c *gin.Context) {
@@ -32,12 +31,25 @@ func Layup(c *gin.Context) {
 }
 
 func GetEvents(c *gin.Context) {
-	c.JSON(http.StatusOK, models.MockDataTodayEvents)
+	// 模拟获取到用户ID
+	uid := 1
+
+	// 模拟获取用户的所有事件id
+	eventsID := models.MockEventsID
+
+	events, err := logic.GetEvents(redis.Ctx, uid, eventsID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "事件未找到"})
+	}
+	c.JSON(http.StatusOK, &events)
 }
 
 func UpdateItem(c *gin.Context) {
-	eventID := c.Param("eventId")
+	eventIndex := c.Param("eventId")
 	itemIndex := c.Param("itemIndex")
+
+	// 模拟获取到用户ID
+	uid := "1"
 
 	var body struct {
 		Checked bool `json:"checked"`
@@ -47,37 +59,13 @@ func UpdateItem(c *gin.Context) {
 		return
 	}
 
-	// TODO: 在此保存修改:数据库更新，缓存更新
-	key := "event:" + eventID
-	val, err := redis.Rdb.Get(redis.Ctx, key).Result()
+	err := logic.UpdateItem(redis.Ctx, uid, eventIndex, itemIndex, body.Checked)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "事件未找到"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "更新失败"})
 		return
 	}
 
-	var event models.Event
-	if err := json.Unmarshal([]byte(val), &event); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "数据解析失败"})
-		return
-	}
-
-	itemId, _ := strconv.Atoi(itemIndex)
-	if itemId < 0 || itemId >= len(event.Items) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "事项索引无效"})
-		return
-	}
-
-	event.Items[itemId].Checked = body.Checked
-
-	updateBytes, _ := json.Marshal(event)
-	redis.Rdb.Set(redis.Ctx, key, updateBytes, 0)
-
-	c.JSON(http.StatusOK, gin.H{
-		"message":    "更新成功",
-		"eventId":    eventID,
-		"itemIndex":  itemIndex,
-		"newChecked": body.Checked,
-	})
+	c.JSON(http.StatusOK, gin.H{"msg": "更新成功"})
 }
 
 // Calendar画面的函数
