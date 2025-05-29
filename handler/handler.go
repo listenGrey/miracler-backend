@@ -1,11 +1,12 @@
-package controllers
+package handler
 
 import (
 	"alpha/logic"
 	"alpha/models"
 	"alpha/pkg/redis"
+	"alpha/pkg/resp/code"
+	"alpha/pkg/resp/resp"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func Register(c *gin.Context) {
@@ -39,9 +40,11 @@ func GetEvents(c *gin.Context) {
 
 	events, err := logic.GetEvents(redis.Ctx, uid, eventsID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "事件未找到"})
+		resp.FailWithMsg(c, code.NotFound, "事件未找到")
+		return
 	}
-	c.JSON(http.StatusOK, &events)
+
+	resp.Success(c, &events)
 }
 
 func UpdateItem(c *gin.Context) {
@@ -55,17 +58,17 @@ func UpdateItem(c *gin.Context) {
 		Checked bool `json:"checked"`
 	}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		resp.Fail(c, code.BadRequest)
 		return
 	}
 
 	err := logic.UpdateItem(redis.Ctx, uid, eventIndex, itemIndex, body.Checked)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "更新失败"})
+		resp.FailWithMsg(c, code.BadRequest, "更新失败")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"msg": "更新成功"})
+	resp.Success(c, nil)
 }
 
 // Calendar画面的函数

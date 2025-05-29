@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"alpha/controllers"
+	"alpha/handler"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -27,39 +27,39 @@ func SetupRouter() *gin.Engine {
 	)
 
 	v1 := r.Group("/api/v1")
-	v1.POST("/register", controllers.Register)
-	v1.POST("/login", controllers.Login)
+	v1.POST("/register", handler.Register)
+	v1.POST("/login", handler.Login)
 	// v1.GET("/refresh_token", controller.RefreshTokenHandler)
 
 	// 中间件
 	// v1.Use(middlewares.JWTAuthMiddleWare()) //JWT认证
 	{
 		// Today
-		v1.GET("/today", controllers.Today)
-		v1.POST("/summary", controllers.Summary)
-		v1.POST("/layup", controllers.Layup)
+		v1.GET("/today", handler.Today)
+		v1.POST("/summary", handler.Summary)
+		v1.POST("/layup", handler.Layup)
 
 		// Event
-		v1.GET("/events", controllers.GetEvents)
-		v1.PATCH("/events/:eventId/items/:itemIndex", controllers.UpdateItem)
+		v1.GET("/events", handler.GetEvents)
+		v1.PATCH("/events/:eventId/items/:itemIndex", handler.UpdateItem)
 
 		// Calendar
-		v1.GET("/calendar", controllers.Calendar)
-		v1.PUT("/one-day", controllers.ModifyOneDay)
+		v1.GET("/calendar", handler.Calendar)
+		v1.PUT("/one-day", handler.ModifyOneDay)
 
 		// New
-		v1.POST("/events", controllers.NewEvent)
+		v1.POST("/events", handler.NewEvent)
 
 		// Overview
-		v1.GET("/overview", controllers.Overview)
+		v1.GET("/overview", handler.Overview)
 
 		// Milestone 打算把日历放在总览的里面，里程碑记录完成情况和线条路程
 		v1.GET("/milestone")
 
 		// Profile 修改事件和项目
-		v1.GET("/profile", controllers.Profile)
-		v1.PUT("/event", controllers.ModifyEvent)
-		v1.DELETE("/events", controllers.DeleteEvent)
+		v1.GET("/profile", handler.Profile)
+		v1.PUT("/event", handler.ModifyEvent)
+		v1.DELETE("/events", handler.DeleteEvent)
 
 		// Testing
 		v1.GET("/ping", func(c *gin.Context) {
